@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book Detail - Perpustakaan</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="navbar bg-base-100 shadow-lg">
+      <div class="flex-1">
+        <a href="index.html" class="btn btn-ghost normal-case text-xl"
+          >Perpustakaan</a
+        >
+      </div>
+      <div class="flex-none">
+        <a href="index.html" class="btn btn-ghost">Back</a>
+      </div>
+    </div>
+
+    <div class="container mx-auto p-4">
+      <div class="card lg:card-side bg-base-100 shadow-xl">
+        <figure>
+          <img
+            src="https://www.tailwindai.dev/placeholder.svg"
+            alt="Book"
+            class="w-full lg:w-64"
+          />
+        </figure>
+        <div class="card-body">
+          <h2 class="card-title text-2xl">Book Title</h2>
+          <p><strong>Penulis:</strong> John Doe</p>
+          <p><strong>Penerbit:</strong> Example Publishing</p>
+          <p><strong>Tahun Terbit:</strong> 2023</p>
+          <p><strong>ISBN:</strong> 978-1234567890</p>
+          <p>
+            <strong>Deskripsi:</strong> Lorem ipsum dolor sit amet, consectetur
+            adipiscing elit. Sed do eiusmod tempor incididunt ut labore et
+            dolore magna aliqua.
+          </p>
+          <div class="card-actions justify-end">
+            <button class="btn btn-primary">Pinjam Buku</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
