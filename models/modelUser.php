@@ -1,7 +1,7 @@
 <?php
 
-require_once "/laragon/www/laundry_shoes/domain_object/node_user.php";
-include_once "/laragon/www/laundry_shoes/model/dbConnect.php";
+require_once "/laragon/www/perpus_oop/domain_object/node_user.php";
+include_once "/laragon/www/perpus_oop/model/dbConnect.php";
 
 class modelUser {
     private $db;

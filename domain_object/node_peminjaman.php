@@ -2,17 +2,16 @@
 
 class NodePeminjaman {
     public $id;
-    public $id_member;
-    public $id_buku;
+    public $user_id;
+    public $status_id;
     public $tanggal_pinjam;
     public $tanggal_kembali;
-    public $status_id;
     public array $detailBuku = [];
 
 
-    public function __construct($id, $id_member, $tanggal_pinjam, $tanggal_kembali, $status_id, $detailBuku) {
+    public function __construct($id, $user_id, $tanggal_pinjam, $tanggal_kembali, $status_id, $detailBuku) {
         $this->id = $id;
-        $this->id_member = $id_member;
+        $this->user_id = $user_id;
         $this->tanggal_pinjam = $tanggal_pinjam;    
         $this->tanggal_kembali = $tanggal_kembali;
         $this->status_id = $status_id;

@@ -4,7 +4,7 @@ require_once "/laragon/www/laundry_shoes/model/dbConnect.php";
 require_once "/laragon/www/laundry_shoes/domain_object/node_peminjaman.php";
 require_once "/laragon/www/laundry_shoes/domain_object/node_detailBuku.php";
 
-class ModelPeminjamanSql {
+class ModelPeminjaman {
     private $db;
 
     public function __construct() {
