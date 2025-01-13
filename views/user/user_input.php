@@ -1,5 +1,6 @@
 <?php
-    require_once "/laragon/www/laundry_shoes/init.php";
+    require_once __DIR__ . '../../../init.php';
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,12 +16,13 @@
 <body class="bg-gray-100 font-sans leading-normal tracking-normal">
 
     <!-- Navbar -->
-    <?php include '../includes/navbar.php'; ?>
+    <?php include_once '../includes/navbar.php'; ?>
+
 
     <!-- Main container -->
     <div class="flex">
         <!-- Sidebar -->
-        <?php include '../includes/sidebar.php'; ?>
+        <?php include_once '../includes/sidebar.php'; ?>
 
         <!-- Main Content -->
         <div class="flex-1 p-8">
@@ -43,11 +45,18 @@
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             placeholder="Masukkan Password" required>
                     </div>
+                    <!-- No Telp User -->
+                    <div class="mb-4">
+                        <label for="no_telp" class="block text-gray-700 text-sm font-bold mb-2">No Telp:</label>
+                        <input type="text" id="no_telp" name="no_telp"
+                            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            placeholder="Masukkan Password" required>
+                    </div>
 
                     <!-- Role User -->
                     <div class="mb-4">
-                        <label for="id_role" class="block text-gray-700 text-sm font-bold mb-2">Role User:</label>
-                        <select id="id_role" name="id_role"
+                        <label for="role_id" class="block text-gray-700 text-sm font-bold mb-2">Role User:</label>
+                        <select id="role_id" name="role_id"
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             required>
                             <option value="">Pilih Role</option>

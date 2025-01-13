@@ -1,6 +1,6 @@
 <?php
+require_once __DIR__ . '../../models/modelPeminjaman.php';
 
-require_once "/laragon/www/perpus_oop/models/modelPeminjaman.php";
 
 class ControllerPeminjaman {
     private $modelPeminjaman;
@@ -77,7 +77,7 @@ class ControllerPeminjaman {
                 break;
 
             default:
-                echo "<script>alert('Aksi tidak dikenal!'); window.location.href='/laundry_shoes/views/peminjaman/peminjaman_list.php';</script>";
+                echo "<script>alert('Aksi tidak dikenal!'); window.location.href='./views/peminjaman/peminjaman_list.php';</script>";
                 break;
         }
     }

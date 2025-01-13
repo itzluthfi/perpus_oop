@@ -1,6 +1,5 @@
 <?php
-require_once "/laragon/www/perpustakaan/model/modelBuku.php";
-
+require_once __DIR__ . '../../models/modelBuku.php';
 class ControllerBuku {
     private $modelBuku;
 
@@ -27,6 +26,7 @@ class ControllerBuku {
                     // Tambahkan buku baru menggunakan model
                     if ($this->modelBuku->addBuku($judul, $pengarang, $penerbit, $tahunTerbit, $stok)) {
                         $message = "Buku berhasil ditambahkan!";
+                        
                     } else {
                         $message = "Gagal menambahkan buku.";
                     }
@@ -79,6 +79,6 @@ class ControllerBuku {
         }
 
         // Tampilkan pesan dan redirect ke halaman daftar buku
-        echo "<script>alert('$message'); window.location.href='/perpustakaan/views/buku/buku_list.php';</script>";
+        echo "<script>alert('$message'); window.location.href='../views/buku/buku_list.php';</script>";
     }
 }

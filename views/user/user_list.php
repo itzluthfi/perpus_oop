@@ -1,12 +1,9 @@
 <?php
-
-require_once "/laragon/www/perpus_oop/init.php";
-
-// include "/laragon/www/laundry_shoes/auth_check.php"; 
+require_once __DIR__ . '../../../init.php';
 
 
 $obj_user = $modelUser->getAllUsers();
-var_dump($obj_user);
+// var_dump($obj_user);
 ?>
 
 <!DOCTYPE html>
@@ -24,12 +21,13 @@ var_dump($obj_user);
 <body class="bg-base-200 font-sans leading-normal tracking-normal">
 
     <!-- Navbar -->
-    <?php include_once '/laragon/www/perpus_oop/views/includes/navbar.php'; ?>
+    <?php require_once __DIR__ . '../../includes/navbar.php' ?>
 
     <!-- Main container -->
     <div class="flex">
         <!-- Sidebar -->
-        <?php include_once "/laragon/www/perpus_oop/views/includes/sidebar.php"; ?>
+        <?php require_once __DIR__ . '../../includes/sidebar.php' ?>
+
 
         <!-- Main Content -->
         <div class="flex-1 p-8">
@@ -45,7 +43,7 @@ var_dump($obj_user);
 
                         <button class="btn btn-primary">
                             <i class="fa-solid fa-plus mr-2"></i>
-                            <a href="/laundry_shoes/views/user/user_input.php">Add New User</a>
+                            <a href="./user_input.php">Add New User</a>
                         </button>
                     </div>
 
@@ -74,7 +72,7 @@ var_dump($obj_user);
                                     <td><?= $user->no_telp ?></td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="/laundry_shoes/views/user/user_update.php?id=<?= $user->id ?>"
+                                            <a href="../../views/user/user_update.php?id=<?= $user->id ?>"
                                                 class="btn btn-sm btn-warning">
                                                 <i class="fa-regular fa-pen-to-square"></i>
                                             </a>
@@ -97,7 +95,7 @@ var_dump($obj_user);
     <script>
     function confirmDelete(userId) {
         if (confirm('Apakah Anda yakin ingin menghapus user ini?')) {
-            window.location.href = "/laundry_shoes/response_input.php?modul=user&fitur=delete&id=" + userId;
+            window.location.href = "../../response_input.php?modul=user&fitur=delete&id=" + userId;
         } else {
             alert("Gagal menghapus data");
             return false;

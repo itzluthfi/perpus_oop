@@ -1,7 +1,8 @@
 <?php
 
-require_once "/laragon/www/perpus_oop/model/dbConnect.php";
-require_once "/laragon/www/perpus_oop/domain_object/node_role.php";
+require_once __DIR__ . '/dbConnect.php';
+require_once __DIR__ . '../../domain_object/node_role.php';
+
 
 class modelRole {
     private $db;
@@ -9,16 +10,7 @@ class modelRole {
 
     public function __construct() {
         // Inisialisasi koneksi database
-        $this->db = new Database('localhost', 'root', '', 'perpustakaan');
-
-        if (isset($_SESSION['roles'])) {
-            // Ambil data dari sesi
-            $this->roles = unserialize($_SESSION['roles']);
-        } else {
-            // Jika sesi kosong, ambil dari database
-            $this->roles = $this->getAllRoleFromDB();
-            $_SESSION['roles'] = serialize($this->roles);
-        }
+        $this->db = Databases::getInstance(); 
     }
 
    
@@ -30,12 +22,10 @@ class modelRole {
                   VALUES ('$role_nama', '$role_deskripsi', $role_status)";
         try {
             $this->db->execute($query);
-            // Perbarui data dalam sesi
-            $this->roles = $this->getAllRoleFromDB();
-            $_SESSION['roles'] = serialize($this->roles);
+          
             return true;
         } catch (Exception $e) {
-            return false;
+           return $e->getMessage();
         }
     }
 
@@ -80,7 +70,7 @@ class modelRole {
             $_SESSION['roles'] = serialize($this->roles);
             return true;
         } catch (Exception $e) {
-            return false;
+           return $e->getMessage();
         }
     }
 
@@ -94,12 +84,9 @@ class modelRole {
             $_SESSION['roles'] = serialize($this->roles);
             return true;
         } catch (Exception $e) {
-            return false;
+           return $e->getMessage();
         }
     }
 
-    public function __destruct() {
-        // Menutup koneksi database
-        $this->db->close();
-    }
+
 }

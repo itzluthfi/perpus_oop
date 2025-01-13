@@ -1,5 +1,7 @@
 <?php
-require_once "/laragon/www/laundry_shoes/model/modelRoleSql.php";
+
+require_once __DIR__ . '../../models/modelRole.php';
+
 
 class ControllerRole {
     private $modelRole;
@@ -76,6 +78,6 @@ class ControllerRole {
         }
 
         // Display message and redirect to the role list page
-        echo "<script>alert('$message'); window.location.href='/laundry_shoes/views/role/role_list.php';</script>";
+        echo "<script>alert('$message'); window.location.href='./views/role/role_list.php';</script>";
     }
 }

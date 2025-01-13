@@ -1,7 +1,8 @@
 <?php
 
-require_once "/laragon/www/perpustakaan/model/dbConnect.php";
-require_once "/laragon/www/perpustakaan/domain_object/node_buku.php";
+
+require_once __DIR__ . '/dbConnect.php';
+require_once __DIR__ . '../../domain_object/node_buku.php';
 
 class modelBuku {
     private $db;
@@ -9,16 +10,8 @@ class modelBuku {
 
     public function __construct() {
         // Inisialisasi koneksi database
-        $this->db = new Database('localhost', 'root', '', 'perpustakaan');
-
-        if (isset($_SESSION['bukus'])) {
-            // Ambil data dari sesi
-            $this->bukus = unserialize($_SESSION['bukus']);
-        } else {
-            // Jika sesi kosong, ambil dari database
-            $this->bukus = $this->getAllBukuFromDB();
-            $_SESSION['bukus'] = serialize($this->bukus);
-        }
+        $this->db = Databases::getInstance(); 
+        $this->bukus = $this->getAllBukuFromDB();
     }
 
     public function addBuku($judul, $pengarang, $penerbit, $tahunTerbit, $stok) {
@@ -34,7 +27,7 @@ class modelBuku {
             $_SESSION['bukus'] = serialize($this->bukus);
             return true;
         } catch (Exception $e) {
-            return false;
+            return $e->getMessage();
         }
     }
 
@@ -78,7 +71,7 @@ class modelBuku {
             $_SESSION['bukus'] = serialize($this->bukus);
             return true;
         } catch (Exception $e) {
-            return false;
+            return $e->getMessage();
         }
     }
 
@@ -92,12 +85,8 @@ class modelBuku {
             $_SESSION['bukus'] = serialize($this->bukus);
             return true;
         } catch (Exception $e) {
-            return false;
+            return $e->getMessage();
         }
     }
 
-    public function __destruct() {
-        // Menutup koneksi database
-        $this->db->close();
-    }
 }

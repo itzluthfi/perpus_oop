@@ -1,15 +1,16 @@
 <?php
+require_once __DIR__ . '/dbConnect.php';
+require_once __DIR__ . '../../domain_object/node_peminjaman.php';
+require_once __DIR__ . '../../domain_object/node_detailPeminjaman.php';
 
-require_once "/laragon/www/laundry_shoes/model/dbConnect.php";
-require_once "/laragon/www/laundry_shoes/domain_object/node_peminjaman.php";
-require_once "/laragon/www/laundry_shoes/domain_object/node_detailBuku.php";
+
 
 class ModelPeminjaman {
     private $db;
 
     public function __construct() {
         // Inisialisasi koneksi database
-        $this->db = new Database('localhost', 'root', '', 'perpustakaan');
+        $this->db = Databases::getInstance(); 
     }
 
     public function addPeminjaman($user_id, $tanggal_pinjam, $tanggal_kembali, $status_id, $detailBuku) {
@@ -27,7 +28,7 @@ class ModelPeminjaman {
                 $buku_id = (int)$buku['buku_id'];
                 $jumlah = (int)$buku['jumlah'];
 
-                $detailQuery = "INSERT INTO detail_buku (peminjaman_id, buku_id, jumlah) 
+                $detailQuery = "INSERT INTO detail_peminjaman (peminjaman_id, buku_id, jumlah) 
                                 VALUES ('$peminjamanId', '$buku_id', '$jumlah')";
                 $this->db->execute($detailQuery);
             }
@@ -35,7 +36,7 @@ class ModelPeminjaman {
             return true;
         } catch (Exception $e) {
             echo "<script>console.log('Error adding peminjaman: " . addslashes($e->getMessage()) . "');</script>";
-            return false;
+            return $e->getMessage();
         }
     }
 
@@ -50,7 +51,7 @@ class ModelPeminjaman {
             return true;
         } catch (Exception $e) {
             echo "<script>console.log('Error updating peminjaman status: " . addslashes($e->getMessage()) . "');</script>";
-            return false;
+            return $e->getMessage();
         }
     }
 
@@ -94,12 +95,12 @@ class ModelPeminjaman {
     }
 
     private function getDetailBukuByPeminjamanId($peminjamanId) {
-        $query = "SELECT * FROM detail_buku WHERE peminjaman_id = '$peminjamanId'";
+        $query = "SELECT * FROM detail_peminjaman WHERE peminjaman_id = '$peminjamanId'";
         $result = $this->db->select($query);
 
         $details = [];
         foreach ($result as $row) {
-            $details[] = new DetailBuku(
+            $details[] = new DetailPeminjaman(
                 $row['id'],
                 $row['peminjaman_id'],
                 $row['buku_id'],
@@ -113,20 +114,17 @@ class ModelPeminjaman {
         $peminjamanId = (int)$peminjamanId;
 
         try {
-            $this->db->execute("DELETE FROM detail_buku WHERE peminjaman_id = '$peminjamanId'");
+            $this->db->execute("DELETE FROM detail_peminjaman WHERE peminjaman_id = '$peminjamanId'");
             $this->db->execute("DELETE FROM peminjaman WHERE id = '$peminjamanId'");
 
             return true;
         } catch (Exception $e) {
             echo "<script>console.log('Error deleting peminjaman: " . addslashes($e->getMessage()) . "');</script>";
-            return false;
+            return $e->getMessage();
         }
     }
 
-    public function __destruct() {
-        // Menutup koneksi database
-        $this->db->close();
-    }
+
 }
 
 ?>

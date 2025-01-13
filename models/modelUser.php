@@ -1,15 +1,14 @@
 <?php
 
-require_once "/laragon/www/perpus_oop/domain_object/node_user.php";
-include_once "/laragon/www/perpus_oop/model/dbConnect.php";
+require_once __DIR__ . '/dbConnect.php';
+require_once __DIR__ . '../../domain_object/node_user.php';
 
 class modelUser {
     private $db;
 
     public function __construct() {
         // Inisialisasi koneksi database
-        $this->db = new Database('localhost', 'root', '', 'perpustakaan');
-        // Cek dan inisialisasi pengguna default jika belum ada
+        $this->db = Databases::getInstance(); 
         $this->initializeDefaultUsers();
     }
 
@@ -32,7 +31,7 @@ class modelUser {
         // Hash password sebelum disimpan
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-        $query = "INSERT INTO users (user_username, user_password, role_id, no_telp) VALUES ('$username', '$hashed_password', $role_id, '$no_telp')";
+        $query = "INSERT INTO users (username, password, role_id, no_telp) VALUES ('$username', '$hashed_password', $role_id, '$no_telp')";
         try {
             $this->db->execute($query);
             return true;
@@ -48,7 +47,7 @@ class modelUser {
         $users = [];
         foreach ($result as $row) {
             // Membuat objek User dan menyimpannya ke array
-            $users[] = new NodeUser($row['id'], $row['user_username'], $row['user_password'], $row['role_id'], $row['no_telp']);
+            $users[] = new NodeUser($row['id'], $row['username'], $row['password'], $row['role_id'], $row['no_telp']);
         }
 
         // Simpan semua pengguna ke dalam sesi
@@ -63,7 +62,7 @@ class modelUser {
 
         if (count($result) > 0) {
             $row = $result[0];
-            $user = new NodeUser($row['id'], $row['user_username'], $row['user_password'], $row['role_id'], $row['no_telp']);
+            $user = new NodeUser($row['id'], $row['username'], $row['password'], $row['role_id'], $row['no_telp']);
 
             // Simpan ke sesi
             $_SESSION['user'] = $user;
@@ -84,7 +83,7 @@ class modelUser {
         // Hash password sebelum disimpan
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-        $query = "UPDATE users SET user_username = '$username', user_password = '$hashed_password', role_id = $role_id, no_telp = '$no_telp' WHERE id = $id";
+        $query = "UPDATE users SET username = '$username', password = '$hashed_password', role_id = $role_id, no_telp = '$no_telp' WHERE id = $id";
         try {
             $this->db->execute($query);
 
@@ -114,10 +113,7 @@ class modelUser {
         }
     }
 
-    public function __destruct() {
-        // Menutup koneksi database
-        $this->db->close();
-    }
+  
 }
 
 ?>

@@ -1,19 +1,14 @@
 <?php
     require_once __DIR__ . '../../../init.php';
 
-    $obj_user = $modelUser->getUserById($_GET['id']);
-   
-    $obj_roles = $modelRole->getAllRoleFromDB();
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Input User</title>
+    <title>Input Role</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
@@ -21,54 +16,48 @@
 <body class="bg-gray-100 font-sans leading-normal tracking-normal">
 
     <!-- Navbar -->
-    <?php include '../includes/navbar.php'; ?>
+    <?php include_once '../includes/navbar.php'; ?>
+
 
     <!-- Main container -->
     <div class="flex">
         <!-- Sidebar -->
-        <?php include '../includes/sidebar.php'; ?>
+        <?php include_once '../includes/sidebar.php'; ?>
 
         <!-- Main Content -->
         <div class="flex-1 p-8">
-            <!-- Formulir Input User -->
+            <!-- Formulir Input Role -->
             <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-lg">
-                <h2 class="text-2xl font-bold mb-6 text-gray-800">Update User</h2>
-                <form action="../../response_input.php?modul=user&fitur=update&id=<?= $obj_user->id ?>" method="POST">
-                    <!-- user id(hidden) -->
-                    <!-- <input type="hidden" name="id" value="<?= $obj_user->id ?>"> -->
-                    <!-- Nama User -->
+                <h2 class="text-2xl font-bold mb-6 text-gray-800">Input Role</h2>
+                <form action="../../response_input.php?modul=role&fitur=add" method="POST">
+                    <!-- Nama Role -->
                     <div class="mb-4">
-                        <label for="user_username" class="block text-gray-700 text-sm font-bold mb-2">Nama User:</label>
-                        <input type="text" id="user_username" name="user_username"
+                        <label for="role_nama" class="block text-gray-700 text-sm font-bold mb-2">Nama Role:</label>
+                        <input type="text" id="role_nama" name="role_nama"
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            placeholder="Masukkan Nama User" value="<?= $obj_user->user_username ?>" required>
+                            placeholder="Masukkan Nama Role" required>
                     </div>
 
-
-                    <!-- Password User -->
+                    <!-- Deskripsi Role -->
                     <div class="mb-4">
-                        <label for="user_password" class="block text-gray-700 text-sm font-bold mb-2">Password:</label>
-                        <input type="password" id="user_password" name="user_password"
+                        <label for="role_deskripsi"
+                            class="block text-gray-700 text-sm font-bold mb-2">Deskripsi:</label>
+                        <textarea id="role_deskripsi" name="role_deskripsi"
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                            placeholder="Masukkan Password" value="<?= $obj_user->user_password ?>" required>
+                            placeholder="Masukkan Deskripsi Role" required></textarea>
                     </div>
 
-                    <!-- Role User -->
+                    <!-- Status Role -->
                     <div class="mb-4">
-                        <label for="role_id" class="block text-gray-700 text-sm font-bold mb-2">Role User:</label>
-                        <select id="role_id" name="role_id"
+                        <label for="role_status" class="block text-gray-700 text-sm font-bold mb-2">Status Role:</label>
+                        <select id="role_status" name="role_status"
                             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                             required>
-                            <option value="<?= $obj_user->role_id ?>">Pilih Role</option>
-                            <?php foreach($obj_roles as $role) {
-                                if($role->role_status == 1) { ?>
-                            <option value="<?= $role->role_id ?>"><?= $role->role_nama ?></option>
-                            <?php } } ?>
+                            <option value="">Pilih Status</option>
+                            <option value="1">Active</option>
+                            <option value="0">InActive</option>
                         </select>
                     </div>
-
-
-
 
                     <!-- Submit and Cancel Buttons -->
                     <div class="flex items-center justify-between">

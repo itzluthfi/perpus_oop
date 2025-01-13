@@ -1,6 +1,7 @@
 <?php
+require_once __DIR__ . '/node_role.php';
 
-class NodeUser {
+class NodeUser extends Role{
     public $id;
     public $user_username;
     public $user_password;

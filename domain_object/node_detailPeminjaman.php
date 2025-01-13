@@ -1,6 +1,6 @@
 <?php
 
-class DetailBuku {
+class DetailPeminjaman {
     public $id;
     public $peminjaman_id;
     public $buku_id;
