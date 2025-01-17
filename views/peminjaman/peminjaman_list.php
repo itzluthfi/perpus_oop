@@ -15,7 +15,7 @@ $peminjamans = $modelPeminjaman->getAllPeminjaman();
     <link href="https://cdn.jsdelivr.net/npm/daisyui@latest/dist/full.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
+    <!-- pdf -->
     <style>
     .modal {
         background-color: rgba(0, 0, 0, 0.5);
@@ -29,6 +29,7 @@ $peminjamans = $modelPeminjaman->getAllPeminjaman();
 
     <script>
     function openModal(id) {
+        console.log("Opening modal with ID:", id); // Debugging
         const modal = document.getElementById(id);
         if (modal) {
             modal.classList.remove('hidden');
@@ -38,6 +39,7 @@ $peminjamans = $modelPeminjaman->getAllPeminjaman();
     }
 
     function closeModal(id) {
+        console.log("Closing modal with ID:", id); // Debugging
         const modal = document.getElementById(id);
         if (modal) {
             modal.classList.add('hidden');
@@ -45,6 +47,7 @@ $peminjamans = $modelPeminjaman->getAllPeminjaman();
             console.error(`Modal with ID "${id}" not found.`);
         }
     }
+
 
     function confirmDelete(peminjamanId) {
         if (confirm('Apakah Anda yakin ingin menghapus peminjaman ini?')) {
@@ -65,7 +68,7 @@ $peminjamans = $modelPeminjaman->getAllPeminjaman();
         <?php include '../includes/sidebar.php'; ?>
         <!-- main content -->
         <div class="flex-1 p-8">
-            <div class="container mx-auto overflow-y-auto h-[calc(100vh-4rem)]">
+            <div class="container mx-auto overflow-y-auto max-h-[calc(100vh-4rem)]">
                 <div class="bg-base-100 shadow-xl rounded-box p-6">
                     <h1 class="text-4xl font-bold mb-6 text-primary">Manage Peminjaman</h1>
 
@@ -77,7 +80,10 @@ $peminjamans = $modelPeminjaman->getAllPeminjaman();
 
                         <button class="btn btn-primary">
                             <i class="fa-solid fa-plus mr-2"></i>
-                            <a href=".././views/peminjaman/peminjaman_input.php">Add New Peminjaman</a>
+                            <a href="peminjaman_input.php">Add New Peminjaman</a>
+                        </button>
+                        <button id="print-pdf" class="btn btn-secondary">
+                            <i class="fas fa-file-pdf mr-2"></i>Cetak PDF
                         </button>
                     </div>
 
@@ -137,6 +143,41 @@ $peminjamans = $modelPeminjaman->getAllPeminjaman();
                                         </div>
                                     </td>
                                 </tr>
+
+                                <!-- Modal Update Status -->
+                                <div id="modal-update-<?= $peminjaman->id ?>"
+                                    class="modal hidden fixed inset-0 flex items-center justify-center">
+
+                                    <div class="modal-content bg-white rounded-lg shadow-lg p-6 w-1/3">
+                                        <h2 class="text-lg font-bold mb-4">Update Status peminjaman</h2>
+                                        <form action="../../response_input.php?modul=peminjaman&fitur=updateStatus"
+                                            method="POST">
+                                            <input type="hidden" name="peminjaman_id" value="<?= $peminjaman->id ?>">
+                                            <div class="mb-4">
+                                                <label for="status_id" class="block text-gray-700 font-medium">Pilih
+                                                    Status
+                                                    Baru:</label>
+                                                <select name="status_id" id="status_id"
+                                                    class="w-full border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                                    <?php foreach ($modelStatus->getAllStatusFromDb() as $statusOption) { ?>
+                                                    <option value="<?= $statusOption->status_id ?>"
+                                                        <?= $statusOption->status_id == $peminjaman->status_id ? 'selected' : '' ?>>
+                                                        <?= htmlspecialchars($statusOption->status_nama) ?>
+                                                    </option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                            <div class="flex justify-end">
+                                                <button type="button"
+                                                    class="bg-gray-300 hover:bg-gray-400 text-gray-800 py-2 px-4 rounded mr-2"
+                                                    onclick="closeModal('modal-update-<?= $peminjaman->id ?>')">Batal</button>
+                                                <button type="submit"
+                                                    class="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded">Update</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+
                                 <?php } } ?>
                             </tbody>
                         </table>
@@ -212,6 +253,44 @@ $peminjamans = $modelPeminjaman->getAllPeminjaman();
         </div>
     </div>
     <?php } } ?>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+    <script>
+    document.getElementById('print-pdf').addEventListener('click', async function() {
+        console.log('Starting PDF generation...');
+        const {
+            jsPDF
+        } = window.jspdf;
+
+        if (!jsPDF) {
+            console.error('jsPDF is not available');
+            return;
+        }
+
+        const pdf = new jsPDF();
+        const content = document.querySelector('.overflow-x-auto');
+
+        if (!content) {
+            console.error('Table content not found');
+            return;
+        }
+
+        console.log('Rendering content...');
+        pdf.html(content, {
+            callback: function(doc) {
+                console.log('PDF generated');
+                const pdfBlob = pdf.output('blob');
+                const pdfUrl = URL.createObjectURL(pdfBlob);
+                window.open(pdfUrl, '_blank');
+            },
+            x: 10,
+            y: 10,
+            width: 190
+        });
+    });
+    </script>
+
 
 </body>
 

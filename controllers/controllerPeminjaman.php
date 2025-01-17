@@ -1,86 +1,127 @@
-<?php
-require_once __DIR__ . '../../models/modelPeminjaman.php';
+    <?php
+    require_once __DIR__ . '../../models/modelPeminjaman.php';
 
 
-class ControllerPeminjaman {
-    private $modelPeminjaman;
+    class ControllerPeminjaman {
+        private $modelPeminjaman;
 
-    public function __construct() {
-        $this->modelPeminjaman = new ModelPeminjaman();
-    }
+        public function __construct() {
+            $this->modelPeminjaman = new ModelPeminjaman();
+        }
 
-    public function handleAction($action) {
-        switch ($action) {
-            case 'add':
-                // Validasi data POST
-                if (isset($_POST['user_id'], $_POST['tanggal_pinjam'], $_POST['tanggal_kembali'], $_POST['status_id'], $_POST['detailBuku'])) {
-                    $user_id = intval($_POST['user_id']);
-                    $tanggal_pinjam = $_POST['tanggal_pinjam'];
-                    $tanggal_kembali = $_POST['tanggal_kembali'];
-                    $status_id = intval($_POST['status_id']);
+        public function handleAction($action) {
+            switch ($action) {
+                
+                case 'add':
+                //     echo "<pre>";
+                // print_r($_POST);
+                // echo "</pre>";
+                // die();
+                    // Validasi data POST
+                    if (isset($_POST['user_id'], $_POST['tanggal_pinjam'], $_POST['tanggal_kembali'], $_POST['status_id'], $_POST['bukus'])) {
+                        $user_id = intval($_POST['user_id']);
+                        $tanggal_pinjam = $_POST['tanggal_pinjam'];
+                        $tanggal_kembali = $_POST['tanggal_kembali'];
+                        $status_id = intval($_POST['status_id']);
 
-                    // Validasi data detailBuku[]
-                    $detailBuku = json_decode($_POST['detailBuku'], true);
-                    if (json_last_error() !== JSON_ERROR_NONE || !is_array($detailBuku) || empty($detailBuku)) {
-                        echo "<script>alert('Data detail buku tidak valid!'); window.history.back();</script>";
-                        break;
-                    }
-
-                    foreach ($detailBuku as $buku) {
-                        if (!isset($buku['buku_id'], $buku['jumlah']) || intval($buku['jumlah']) <= 0) {
-                            echo "<script>alert('Data buku tidak lengkap atau tidak valid!'); window.history.back();</script>";
-                            break 2;
+                        // Validasi data detailBuku[]
+                        $detailBuku = json_decode($_POST['bukus'], true);
+                        if (json_last_error() !== JSON_ERROR_NONE || !is_array($detailBuku) || empty($detailBuku)) {
+                            echo "<script>alert('Data detail buku tidak valid!'); window.history.back();</script>";
+                            break;
                         }
-                    }
 
-                    // Tambahkan peminjaman dan detailnya
-                    $isSuccess = $this->modelPeminjaman->addPeminjaman($user_id, $tanggal_pinjam, $tanggal_kembali, $status_id, $detailBuku);
+                        foreach ($detailBuku as $buku) {
+                            if (!isset($buku['buku_id'], $buku['jumlah']) || intval($buku['jumlah']) <= 0) {
+                                echo "<script>alert('Data buku tidak lengkap atau tidak valid!'); window.history.back();</script>";
+                                break 2;
+                            }
+                        }
 
-                    if ($isSuccess) {
-                        echo "<script>alert('Peminjaman berhasil ditambahkan!'); window.location.href='/laundry_shoes/views/peminjaman/peminjaman_list.php';</script>";
+                        // Tambahkan peminjaman dan detailnya
+                        $isSuccess = $this->modelPeminjaman->addPeminjaman($user_id, $tanggal_pinjam, $tanggal_kembali, $status_id, $detailBuku);
+
+                        if ($isSuccess) {
+                            echo "<script>alert('Peminjaman berhasil ditambahkan!'); window.location.href='./views/peminjaman/peminjaman_list.php';</script>";
+                        } else {
+                            echo "<script>alert('Gagal menambahkan peminjaman!'); window.history.back();</script>";
+                        }
                     } else {
-                        echo "<script>alert('Gagal menambahkan peminjaman!'); window.history.back();</script>";
+                        echo "<script>alert('Data yang dikirim tidak lengkap!,{$_POST}'); window.history.back();</script>";
                     }
-                } else {
-                    echo "<script>alert('Data yang dikirim tidak lengkap!'); window.history.back();</script>";
-                }
-                break;
+                    break;
 
-            case 'delete':
-                // Hapus peminjaman berdasarkan ID
-                if (isset($_GET['id'])) {
-                    $peminjamanId = intval($_GET['id']);
-                    if ($this->modelPeminjaman->deletePeminjaman($peminjamanId)) {
-                        echo "<script>alert('Peminjaman berhasil dihapus!'); window.location.href='/laundry_shoes/views/peminjaman/peminjaman_list.php';</script>";
+                case 'addAnggota':
+                        // Debugging (opsional, bisa dihapus setelah tidak diperlukan)
+                        // echo "<pre>";
+                        // print_r($_POST);
+                        // echo "</pre>";
+                        // die();
+        
+                        // Validasi data POST
+                        if (isset($_POST['user_id'], $_POST['tanggal_pinjam'], $_POST['tanggal_kembali'], $_POST['status_id'], $_POST['bukus']) && is_array($_POST['bukus'])) {
+                            $user_id = intval($_POST['user_id']);
+                            $tanggal_pinjam = $_POST['tanggal_pinjam'];
+                            $tanggal_kembali = $_POST['tanggal_kembali'];
+                            $status_id = intval($_POST['status_id']);
+                            $detailBuku = $_POST['bukus'];
+        
+                            // Validasi data detailBuku[]
+                            foreach ($detailBuku as $buku) {
+                                if (!isset($buku['id'], $buku['jumlah']) || intval($buku['jumlah']) <= 0) {
+                                    echo "<script>alert('Data buku tidak lengkap atau tidak valid!'); window.history.back();</script>";
+                                    return;
+                                }
+                            }
+        
+                            // Tambahkan peminjaman dan detailnya
+                            $isSuccess = $this->modelPeminjaman->addPeminjaman($user_id, $tanggal_pinjam, $tanggal_kembali, $status_id, $detailBuku);
+        
+                            if ($isSuccess) {
+                                echo "<script>alert('Peminjaman berhasil ditambahkan!'); window.location.href='./views/peminjaman/peminjaman_list.php';</script>";
+                            } else {
+                                echo "<script>alert('Gagal menambahkan peminjaman!'); window.history.back();</script>";
+                            }
+                        } else {
+                            echo "<script>alert('Data yang dikirim tidak lengkap!'); window.history.back();</script>";
+                        }
+                        break;
+
+                case 'delete':
+                    // Hapus peminjaman berdasarkan ID
+                    if (isset($_GET['id'])) {
+                        $peminjamanId = intval($_GET['id']);
+                        if ($this->modelPeminjaman->deletePeminjaman($peminjamanId)) {
+                            echo "<script>alert('Peminjaman berhasil dihapus!'); window.location.href='./views/peminjaman/peminjaman_list.php';</script>";
+                        } else {
+                            echo "<script>alert('Gagal menghapus peminjaman!'); window.location.href='./views/peminjaman/peminjaman_list.php';</script>";
+                        }
                     } else {
-                        echo "<script>alert('Gagal menghapus peminjaman!'); window.location.href='/laundry_shoes/views/peminjaman/peminjaman_list.php';</script>";
+                        echo "<script>alert('ID peminjaman tidak ditemukan!'); window.history.back();</script>";
                     }
-                } else {
-                    echo "<script>alert('ID peminjaman tidak ditemukan!'); window.history.back();</script>";
-                }
-                break;
+                    break;
 
-            case 'updateStatus':
-                // Update status peminjaman berdasarkan ID
-                if (isset($_POST['peminjaman_id'], $_POST['status_id'])) {
-                    $peminjamanId = intval($_POST['peminjaman_id']);
-                    $statusId = intval($_POST['status_id']);
+                case 'updateStatus':
+                    // Update status peminjaman berdasarkan ID
+                    if (isset($_POST['peminjaman_id'], $_POST['status_id'])) {
+                        $peminjamanId = intval($_POST['peminjaman_id']);
+                        $statusId = intval($_POST['status_id']);
 
-                    if ($this->modelPeminjaman->updatePeminjamanStatus($peminjamanId, $statusId)) {
-                        echo "<script>alert('Status peminjaman berhasil diperbarui!'); window.location.href='/laundry_shoes/views/peminjaman/peminjaman_list.php';</script>";
+                        if ($this->modelPeminjaman->updatePeminjamanStatus($peminjamanId, $statusId)) {
+                            echo "<script>alert('Status peminjaman berhasil diperbarui!'); window.location.href='./views/peminjaman/peminjaman_list.php';</script>";
+                        } else {
+                            echo "<script>alert('Gagal memperbarui status peminjaman!'); window.history.back();</script>";
+                        }
                     } else {
-                        echo "<script>alert('Gagal memperbarui status peminjaman!'); window.history.back();</script>";
+                        echo "<script>alert('Data yang dikirim tidak lengkap!'); window.history.back();</script>";
                     }
-                } else {
-                    echo "<script>alert('Data yang dikirim tidak lengkap!'); window.history.back();</script>";
-                }
-                break;
+                    break;
 
-            default:
-                echo "<script>alert('Aksi tidak dikenal!'); window.location.href='./views/peminjaman/peminjaman_list.php';</script>";
-                break;
+                default:
+                    echo "<script>alert('Aksi tidak dikenal!'); window.location.href='./views/peminjaman/peminjaman_list.php';</script>";
+                    break;
+            }
         }
     }
-}
 
-?>
+    ?>

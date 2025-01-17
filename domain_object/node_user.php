@@ -9,8 +9,9 @@ class NodeUser extends Role{
     public $no_telp;
 
     
-    public function __construct($id,$user_username,$user_password,$role_id,$no_telp)
+    public function __construct($id,$user_username,$user_password,$role_id,$no_telp, $role_nama, $role_deskripsi, $role_status)
     {
+        parent::__construct($role_id,$role_nama,$role_deskripsi,$role_status);
         $this->id = $id;
         $this->user_username = $user_username;
         $this->user_password = $user_password;

@@ -35,6 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' || $_SERVER['REQUEST_METHOD'] == 'GET')
             $peminjamanController->handleAction($action);
             break;
 
+        case 'cart':
+            require_once 'controllers/ControllerCart.php';
+            $cartController = new ControllerCart();
+            $cartController->handleAction($action);
+            break;
+
             case 'auth':
                 switch ($action) {
                     case 'login':

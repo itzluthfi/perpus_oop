@@ -40,38 +40,102 @@ class modelUser {
         }
     }
 
-    public function getAllUsers() {
-        $query = "SELECT * FROM users";
-        $result = $this->db->select($query);
-
-        $users = [];
-        foreach ($result as $row) {
-            // Membuat objek User dan menyimpannya ke array
-            $users[] = new NodeUser($row['id'], $row['username'], $row['password'], $row['role_id'], $row['no_telp']);
-        }
-
-        // Simpan semua pengguna ke dalam sesi
-        $_SESSION['users'] = $users;
-
-        return $users;
-    }
-
-    public function getUserById($id) {
-        $query = "SELECT * FROM users WHERE id = $id";
+    private function getRoleById($role_id) {
+        $role_id = (int)$role_id;
+        $query = "SELECT * FROM roles WHERE id = $role_id";
         $result = $this->db->select($query);
 
         if (count($result) > 0) {
             $row = $result[0];
-            $user = new NodeUser($row['id'], $row['username'], $row['password'], $row['role_id'], $row['no_telp']);
-
-            // Simpan ke sesi
-            $_SESSION['user'] = $user;
-
-            return $user;
+            $role = new Role($row['id'], $row['nama'], $row['deskripsi'], $row['status']);
+            return $role;
         }
 
         return null;
     }
+
+    public function getAllUsers() {
+        $query = "SELECT * FROM users";
+        $result = $this->db->select($query);
+    
+        $users = [];
+        foreach ($result as $row) {
+            // Ambil data role berdasarkan role_id
+            $role = $this->getRoleById($row['role_id']);
+            
+            // Pastikan objek Role ditemukan
+            if ($role) {
+                $users[] = new NodeUser(
+                    $row['id'], 
+                    $row['username'], 
+                    $row['password'], 
+                    $row['role_id'], 
+                    $row['no_telp'], 
+                    $role->role_nama, 
+                    $role->role_deskripsi, 
+                    $role->role_status
+                );
+            } else {
+                // Jika role tidak ditemukan, tetap tambahkan pengguna tetapi dengan data role kosong
+                $users[] = new NodeUser(
+                    $row['id'], 
+                    $row['username'], 
+                    $row['password'], 
+                    $row['role_id'], 
+                    $row['no_telp'], 
+                    null, // role_nama
+                    null, // role_deskripsi
+                    null  // role_status
+                );
+            }
+        }
+    
+        return $users;
+    }
+    
+
+    public function getUserById($id) {
+        $query = "SELECT * FROM users WHERE id = $id";
+        $result = $this->db->select($query);
+    
+        if (count($result) > 0) {
+            $row = $result[0];
+            
+            // Ambil data role berdasarkan role_id
+            $role = $this->getRoleById($row['role_id']);
+            
+            // Buat objek NodeUser dengan data role yang sesuai
+            if ($role) {
+                $user = new NodeUser(
+                    $row['id'], 
+                    $row['username'], 
+                    $row['password'], 
+                    $row['role_id'], 
+                    $row['no_telp'], 
+                    $role->role_nama, 
+                    $role->role_deskripsi, 
+                    $role->role_status
+                );
+            } else {
+                // Jika role tidak ditemukan, buat NodeUser dengan atribut role kosong
+                $user = new NodeUser(
+                    $row['id'], 
+                    $row['username'], 
+                    $row['password'], 
+                    $row['role_id'], 
+                    $row['no_telp'], 
+                    null, // role_nama
+                    null, // role_deskripsi
+                    null  // role_status
+                );
+            }
+    
+            return $user;
+        }
+    
+        return null;
+    }
+    
 
     public function updateUser($id, $username, $password, $role_id, $no_telp) {
         // Escape input untuk mencegah SQL Injection

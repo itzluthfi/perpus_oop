@@ -2,6 +2,15 @@
 require_once __DIR__ . '../../init.php';
 $bukus = $modelBuku->getAllBukuFromDB();
 
+if(isset($_SESSION['anggota_login'])){
+    $carts = $modelCart->getCartByUserId(unserialize($_SESSION['anggota_login'])->id); 
+    $user = $modelUser->getUserById(unserialize($_SESSION['anggota_login'])->id);
+    // var_dump($carts);
+}else{
+    $carts = [];
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -80,7 +89,7 @@ $bukus = $modelBuku->getAllBukuFromDB();
                             <label for="cart-drawer" class="drawer-button btn btn-ghost btn-circle">
                                 <div class="indicator">
                                     <i class="fas fa-shopping-cart"></i>
-                                    <span class="badge badge-sm indicator-item">2</span>
+                                    <span class="badge badge-sm indicator-item"><?= count($carts) ?></span>
                                 </div>
                             </label>
                         </li>
@@ -116,11 +125,14 @@ $bukus = $modelBuku->getAllBukuFromDB();
                             <p class="text-sm"><?= $buku->penerbit ?></p>
                             <p class="text-sm">Year: <?= $buku->tahunTerbit ?></p>
                             <div class="card-actions justify-end mt-2">
-                                <button class="btn btn-sm btn-primary"
-                                    onclick="openBorrowModal('Book Title 1', 'https://picsum.photos/seed/1/300/200', '2023')">
+                                <button class="btn btn-sm btn-primary" onclick="openBorrowModal(this)"
+                                    data-judul="<?= $buku->judul; ?>" data-pengarang="<?= $buku->pengarang; ?>"
+                                    data-penerbit="<?= $buku->penerbit; ?>" data-image="img/wp1.jpg"
+                                    data-tahunTerbit="<?= $buku->tahunTerbit; ?>" data-buku_id="<?= $buku->id; ?>">
+
                                     <i class="fas fa-book-reader mr-2"></i>Borrow
                                 </button>
-                                <a href="./book_detail.php" class="btn btn-sm btn-secondary">
+                                <a href="./book_detail.php?id=<?= $buku->id ?>" class="btn btn-sm btn-secondary">
                                     <i class="fas fa-info-circle mr-2"></i>Details
                                 </a>
                             </div>
@@ -145,77 +157,79 @@ $bukus = $modelBuku->getAllBukuFromDB();
                 <li>
                     <label for="cart-drawer" class="drawer-button">
                         <i class="fas fa-shopping-cart mr-2"></i>Cart
-                        <span class="badge badge-sm">2</span>
+                        <span class="badge badge-sm"><?= count($carts) ?></span>
                     </label>
                 </li>
             </ul>
         </div>
     </div>
 
-    <!-- Borrow Modal -->
-    <input type="checkbox" id="borrow-modal" class="modal-toggle" />
-    <div class="modal">
-        <div class="modal-box">
-            <h3 class="font-bold text-lg" id="modal-book-title"></h3>
-            <img id="modal-book-image" src="" alt="Book Cover" class="w-full h-48 object-cover rounded-lg my-4" />
-            <p id="modal-book-year" class="mb-4"></p>
-            <div class="form-control">
-                <label class="label">
-                    <span class="label-text">Number of books to borrow:</span>
-                </label>
-                <input type="number" id="borrow-quantity" placeholder="Enter quantity" class="input input-bordered"
-                    min="1" max="5" />
-            </div>
-            <div class="modal-action">
-                <button class="btn btn-primary" onclick="borrowBook()">Borrow</button>
-                <label for="borrow-modal" class="btn">Close</label>
+    <form id="borrow-form" method="POST" action="../response_input.php?modul=cart&fitur=add">
+        <input type="checkbox" id="borrow-modal" class="modal-toggle" />
+        <div class="modal">
+            <div class="modal-box">
+                <h3 class="font-bold text-lg" id="modal-book-title"></h3>
+                <img id="modal-book-image" src="" alt="Book Cover" class="w-full h-48 object-cover rounded-lg my-4" />
+                <p id="modal-book-year" class="mb-4"></p>
+                <!-- Hidden inputs for book data -->
+                <input type="hidden" name="buku_id" id="hidden-buku_id" />
+                <input type="hidden" name="user_id" value="<?= $user->id; ?>" />
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Number of books to borrow:</span>
+                    </label>
+                    <input type="number" name="jumlah" id="borrow-quantity" placeholder="Enter quantity"
+                        class="input input-bordered" min="1" max="5" required />
+                </div>
+                <div class="modal-action">
+                    <button type="submit" class="btn btn-primary">Borrow</button>
+                    <label for="borrow-modal" class="btn">Close</label>
+                </div>
             </div>
         </div>
-    </div>
+    </form>
+
 
     <!-- Cart Drawer -->
-    <div class="drawer drawer-end">
+    <div class="drawer drawer-end ">
         <input id="cart-drawer" type="checkbox" class="drawer-toggle" />
         <div class="drawer-side fixed top-16 right-0 z-50">
             <label for="cart-drawer" class="drawer-overlay"></label>
             <ul class="menu p-4 w-80 h-[calc(100%-4rem)] bg-modern-accent text-modern-secondary overflow-y-auto">
-                <div class="flex justify-between items-center mb-4">
+                <div class="flex justify-between items-center mb-4 n">
                     <h2 class="text-xl font-bold">Your Cart</h2>
                     <label for="cart-drawer" class="btn btn-sm btn-circle btn-ghost">
                         <i class="fas fa-times"></i>
                     </label>
                 </div>
                 <!-- Cart items -->
+                <?php foreach ($carts as $cart) { 
+                    $buku = $modelBuku->getBukuById($cart->buku_id);
+                ?>
+
                 <li class="mb-4">
                     <div class="flex items-center">
                         <img src="https://picsum.photos/seed/1/100/100" alt="Book 1"
                             class="w-16 h-16 object-cover mr-4 rounded" />
                         <div>
-                            <h3 class="font-bold">Book Title 1</h3>
-                            <p>Quantity: 1</p>
-                            <p>Publisher: Publisher A</p>
+                            <h3 class="font-bold"><?= $buku->judul ?></h3>
+                            <p>Quantity: <?= $cart->jumlah ?></p>
+                            <p>Publisher: <?= $buku->judul ?></p>
                         </div>
+                        <form action="../../response_input.php?modul=cart&fitur=remove?id=<?= $cart->id ?>"
+                            method="POST">
+                            <button class="btn btn-error btn-sm mt-2">
+                                <i class="fas fa-trash-alt mr-2"></i>
+                            </button>
+                        </form>
                     </div>
-                    <button class="btn btn-error btn-sm mt-2">
-                        <i class="fas fa-trash-alt mr-2"></i>Remove
-                    </button>
+
                 </li>
-                <li class="mb-4">
-                    <div class="flex items-center">
-                        <img src="https://picsum.photos/seed/2/100/100" alt="Book 2"
-                            class="w-16 h-16 object-cover mr-4 rounded" />
-                        <div>
-                            <h3 class="font-bold">Book Title 2</h3>
-                            <p>Quantity: 1</p>
-                            <p>Publisher: Publisher B</p>
-                        </div>
-                    </div>
-                    <button class="btn btn-error btn-sm mt-2">
-                        <i class="fas fa-trash-alt mr-2"></i>Remove
-                    </button>
-                </li>
+                <?php } ?>
+
                 <li>
-                    <button class="btn btn-primary w-full" onclick="checkoutCart()">
+                    <button class="btn btn-primary w-full">
                         <i class="fas fa-check mr-2"></i>Checkout Cart
                     </button>
                 </li>
@@ -226,26 +240,47 @@ $bukus = $modelBuku->getAllBukuFromDB();
 
 
     <script>
-    function checkoutCart() {
-        console.log("Cart checked out");
-        window.location.href = "./history.php";
-    }
+    function openBorrowModal(button) {
+        // Ambil data dari atribut tombol
+        const buku_id = button.getAttribute('data-buku_id');
+        const judul = button.getAttribute('data-judul');
+        const pengarang = button.getAttribute('data-pengarang');
+        const penerbit = button.getAttribute('data-penerbit');
+        const image = button.getAttribute('data-image');
+        const tahunTerbit = button.getAttribute('data-tahunTerbit');
 
-    function openBorrowModal(title, imageUrl, year) {
-        document.getElementById("modal-book-title").textContent = title;
-        document.getElementById("modal-book-image").src = imageUrl;
-        document.getElementById(
-            "modal-book-year"
-        ).textContent = `Year: ${year}`;
-        document.getElementById("borrow-modal").checked = true;
+        // Isi data ke elemen modal
+        document.getElementById('modal-book-title').textContent = `${judul} (${tahunTerbit})`;
+        document.getElementById('modal-book-year').textContent = `Written by ${pengarang}, published by ${penerbit}`;
+        document.getElementById('modal-book-image').src = image;
+
+        // Isi data ke input hidden di form
+        document.getElementById('hidden-buku_id').value = buku_id;
+
+
+        // Tampilkan modal
+        document.getElementById('borrow-modal').checked = true;
     }
 
     function borrowBook() {
-        const title = document.getElementById("modal-book-title").textContent;
-        const quantity = document.getElementById("borrow-quantity").value;
-        console.log(`Borrowing ${quantity} copies of "${title}"`);
-        // Here you would typically send this data to your backend
-        document.getElementById("borrow-modal").checked = false;
+        const quantity = document.getElementById('borrow-quantity').value;
+        const title = document.getElementById('modal-book-title').textContent;
+
+        if (quantity > 0) {
+            alert(`You have borrowed ${quantity} copies of "${title}".`);
+        } else {
+            alert("Please enter a valid quantity.");
+        }
+
+        // Tutup modal setelah aksi
+        document.getElementById('borrow-modal').checked = false;
+    }
+
+
+
+    function checkoutCart() {
+        console.log("Cart checked out");
+        window.location.href = "./history.php";
     }
     </script>
 </body>

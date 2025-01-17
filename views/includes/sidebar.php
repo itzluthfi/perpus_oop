@@ -37,10 +37,10 @@ $user_role = $modelRole->getRoleById(unserialize($_SESSION['user_login'])->role_
                 <i class="fa-solid fa-circle-user"></i>
                 <span>Master Data Role</span>
             </a>
-            <a href="../../views/status/status_list.php" class="nav-link">
+            <!-- <a href="../../views/status/status_list.php" class="nav-link">
                 <i class="fa-solid fa-bell"></i>
                 <span>Master Data Status</span>
-            </a>
+            </a> -->
             <a href="../../views/user/user_list.php" class="nav-link">
                 <i class="fa-solid fa-users"></i>
                 <span>Master Data User</span>
@@ -59,7 +59,7 @@ $user_role = $modelRole->getRoleById(unserialize($_SESSION['user_login'])->role_
                 <div class="hidden pl-6 group-hover:block">
                     <a href="../../views/peminjaman/peminjaman_input.php" class="sub-nav-link">
                         <i class="fa-solid fa-clipboard"></i>
-                        <span>Add Peminjaman</span>
+                        <span>Tambah Peminjaman</span>
                     </a>
                     <a href="../../views/peminjaman/peminjaman_list.php" class="sub-nav-link">
                         <i class="fa-solid fa-clipboard"></i>

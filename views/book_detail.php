@@ -1,3 +1,9 @@
+<?php
+require_once __DIR__ . '../../init.php';
+$buku = $modelBuku->getBukuById($_GET['id']);
+// var_dump($buku);
+?>
+
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 
@@ -27,12 +33,14 @@
             </figure>
             <div class="card-body lg:w-1/2 flex flex-col justify-between ">
                 <div>
-                    <h2 class="card-title text-4xl mb-6 text-primary">Book Title</h2>
+                    <h2 class="card-title text-4xl mb-6 text-primary"><?= $buku->judul ?></h2>
                     <div class="space-y-4">
-                        <p class="text-lg"><i class="fas fa-user-edit mr-2"></i><strong>Penulis:</strong> John Doe</p>
-                        <p class="text-lg"><i class="fas fa-building mr-2"></i><strong>Penerbit:</strong> Example
-                            Publishing</p>
-                        <p class="text-lg"><i class="fas fa-calendar-alt mr-2"></i><strong>Tahun Terbit:</strong> 2023
+                        <p class="text-lg"><i
+                                class="fas fa-user-edit mr-2"></i><strong>Penulis:</strong><?= $buku->pengarang ?></p>
+                        <p class="text-lg"><i class="fas fa-building mr-2"></i><strong>Penerbit:</strong>
+                            <?= $buku->penerbit ?></p>
+                        <p class="text-lg"><i class="fas fa-calendar-alt mr-2"></i><strong>Tahun Terbit:</strong>
+                            <?= $buku->tahunTerbit ?>
                         </p>
                         <p class="text-lg"><i class="fas fa-barcode mr-2"></i><strong>ISBN:</strong> 978-1234567890</p>
                     </div>

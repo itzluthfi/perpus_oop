@@ -1,7 +1,7 @@
 <?php 
-//require_once "/laragon/www/laundry_shoes/model/modelRole.php"; 
+
 require_once "../../init.php";   
-// include "/laragon/www/laundry_shoes/auth_check.php";    
+
 $obj_role = $modelRole->getAllRoleFromDB(); 
 // $obj_member = $modelMember->getAllMembers(); 
 // $obj_item = $modelItem->getAllItem(); 
@@ -134,7 +134,7 @@ $sales_totals_json = json_encode($sales_totals);
 }
 </style>
 
-<body class="bg-yellow-100 font-sans leading-normal tracking-normal overflow-hidden">
+<body class="bg-base-200 font-sans leading-normal tracking-normal overflow-hidden">
 
     <!-- Navbar -->
     <?php include_once '../includes/navbar.php'; ?>
@@ -376,17 +376,6 @@ function openModal(id) {
 function closeModal(id) {
     document.getElementById(id).classList.add('hidden');
 }
-
-// function confirmDelete(saleId) {
-//     if (confirm('Apakah Anda yakin ingin menghapus role ini?')) {
-//         // Redirect ke halaman delete dengan fitur=delete
-//         window.location.href = "/laundry_shoes/response_input.php?modul=sale&fitur=delete&id=" + saleId;
-//     } else {
-//         // Batalkan penghapusan
-//         alert("gagal menghapus data");
-//         return false;
-//     }
-// }
 </script>
 
 </body>

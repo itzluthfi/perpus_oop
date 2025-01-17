@@ -75,6 +75,28 @@ class ModelPeminjaman {
         return $peminjamanList;
     }
 
+    public function getPeminjamanByUserId($userId) {
+        $userId = (int)$userId;
+        $query = "SELECT * FROM peminjaman WHERE user_id = '$userId'";
+        $result = $this->db->select($query);
+    
+        $peminjamanList = [];
+        foreach ($result as $row) {
+            $peminjamanId = $row['id'];
+            $details = $this->getDetailBukuByPeminjamanId($peminjamanId);
+            $peminjamanList[] = new NodePeminjaman(
+                $peminjamanId,
+                $row['user_id'],
+                $row['tanggal_pinjam'],
+                $row['tanggal_kembali'],
+                $row['status_id'],
+                $details
+            );
+        }
+        return $peminjamanList;
+    }
+    
+
     public function getPeminjamanById($peminjamanId) {
         $query = "SELECT * FROM peminjaman WHERE id = '$peminjamanId'";
         $result = $this->db->select($query);
