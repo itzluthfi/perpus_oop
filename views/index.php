@@ -125,6 +125,7 @@ if(isset($_SESSION['anggota_login'])){
                             <p class="text-sm"><?= $buku->penerbit ?></p>
                             <p class="text-sm">Year: <?= $buku->tahunTerbit ?></p>
                             <div class="card-actions justify-end mt-2">
+                                <?php if(isset($_SESSION['anggota_login'])) { ?>
                                 <button class="btn btn-sm btn-primary" onclick="openBorrowModal(this)"
                                     data-judul="<?= $buku->judul; ?>" data-pengarang="<?= $buku->pengarang; ?>"
                                     data-penerbit="<?= $buku->penerbit; ?>" data-image="img/wp1.jpg"
@@ -132,6 +133,15 @@ if(isset($_SESSION['anggota_login'])){
 
                                     <i class="fas fa-book-reader mr-2"></i>Borrow
                                 </button>
+                                <?php }else{ ?>
+                                <button class="btn btn-sm btn-primary" onclick="alert('silahkan login dahulu kawan')"
+                                    data-judul="<?= $buku->judul; ?>" data-pengarang="<?= $buku->pengarang; ?>"
+                                    data-penerbit="<?= $buku->penerbit; ?>" data-image="img/wp1.jpg"
+                                    data-tahunTerbit="<?= $buku->tahunTerbit; ?>" data-buku_id="<?= $buku->id; ?>">
+
+                                    <i class="fas fa-book-reader mr-2"></i>Borrow
+                                </button>
+                                <?php } ?>
                                 <a href="./book_detail.php?id=<?= $buku->id ?>" class="btn btn-sm btn-secondary">
                                     <i class="fas fa-info-circle mr-2"></i>Details
                                 </a>
@@ -192,52 +202,81 @@ if(isset($_SESSION['anggota_login'])){
 
 
     <!-- Cart Drawer -->
-    <div class="drawer drawer-end ">
+    <div class="drawer drawer-end">
         <input id="cart-drawer" type="checkbox" class="drawer-toggle" />
         <div class="drawer-side fixed top-16 right-0 z-50">
             <label for="cart-drawer" class="drawer-overlay"></label>
-            <ul class="menu p-4 w-80 h-[calc(100%-4rem)] bg-modern-accent text-modern-secondary overflow-y-auto">
-                <div class="flex justify-between items-center mb-4 n">
+            <form id="cart-form" action="../response_input.php?modul=peminjaman&fitur=checkout" method="POST"
+                class="menu p-4 w-80 h-[calc(100%-4rem)] bg-modern-accent text-modern-secondary overflow-y-auto">
+                <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-bold">Your Cart</h2>
                     <label for="cart-drawer" class="btn btn-sm btn-circle btn-ghost">
                         <i class="fas fa-times"></i>
                     </label>
                 </div>
-                <!-- Cart items -->
-                <?php foreach ($carts as $cart) { 
-                    $buku = $modelBuku->getBukuById($cart->buku_id);
-                ?>
 
-                <li class="mb-4">
+                <!-- Hidden Inputs -->
+                <input type="hidden" name="user_id" value="<?= $user->id ?>" />
+                <input type="hidden" name="status_id" value="2" />
+                <input type="hidden" id="bukus-input" name="bukus" value="" />
+
+                <!-- Cart Items -->
+                <?php foreach ($carts as $cart): 
+                $buku = $modelBuku->getBukuById($cart->buku_id);
+            ?>
+                <li class="mb-4 cart-item" data-buku-id="<?= $cart->buku_id ?>" data-jumlah="<?= $cart->jumlah ?>">
                     <div class="flex items-center">
                         <img src="https://picsum.photos/seed/1/100/100" alt="Book 1"
                             class="w-16 h-16 object-cover mr-4 rounded" />
                         <div>
                             <h3 class="font-bold"><?= $buku->judul ?></h3>
                             <p>Quantity: <?= $cart->jumlah ?></p>
-                            <p>Publisher: <?= $buku->judul ?></p>
+                            <p>Publisher: <?= $buku->penerbit ?></p>
+
                         </div>
-                        <form action="../../response_input.php?modul=cart&fitur=remove?id=<?= $cart->id ?>"
-                            method="POST">
-                            <button class="btn btn-error btn-sm mt-2">
-                                <i class="fas fa-trash-alt mr-2"></i>
-                            </button>
-                        </form>
+
                     </div>
-
                 </li>
-                <?php } ?>
+                <?php endforeach; ?>
 
+                <!-- Additional Inputs -->
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">Borrow Date:</span>
+                    </label>
+                    <input type="date" name="tanggal_pinjam" class="input input-bordered" required />
+                </div>
+                <div class="form-control mb-4">
+                    <label class="label">
+                        <span class="label-text">Return Date:</span>
+                    </label>
+                    <input type="date" name="tanggal_kembali" class="input input-bordered" required />
+                </div>
+
+                <!-- Checkout Button -->
                 <li>
-                    <button class="btn btn-primary w-full">
+                    <button type="submit" class="btn btn-primary w-full">
                         <i class="fas fa-check mr-2"></i>Checkout Cart
                     </button>
                 </li>
-            </ul>
+            </form>
         </div>
     </div>
 
 
+    <script>
+    // Handle form submission to generate bukus JSON
+    document.getElementById('cart-form').addEventListener('submit', function(event) {
+        const cartItems = document.querySelectorAll('.cart-item');
+        const bukus = Array.from(cartItems).map(item => ({
+            buku_id: parseInt(item.getAttribute('data-buku-id')),
+            jumlah: parseInt(item.getAttribute('data-jumlah'))
+        }));
+
+        // Set bukus JSON to hidden input
+        document.getElementById('bukus-input').value = JSON.stringify(bukus);
+    });
+    </script>
 
     <script>
     function openBorrowModal(button) {

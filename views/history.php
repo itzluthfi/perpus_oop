@@ -1,3 +1,11 @@
+<?php
+require_once __DIR__ . '../../init.php';
+
+$user = unserialize($_SESSION['anggota_login']);
+$historyPeminjaman = $modelPeminjaman->getPeminjamanByUserId($user->id);
+
+?>
+
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
 
@@ -34,42 +42,46 @@
             <div class="card-body">
                 <div class="overflow-x-auto">
                     <table class="table w-full">
-                        <thead class>
+                        <thead>
                             <tr class="bg-primary text-primary-content">
                                 <th class="rounded-tl-lg">Judul Buku</th>
                                 <th>Tanggal Pinjam</th>
                                 <th>Tanggal Kembali</th>
+                                <th>Jumlah</th>
                                 <th class="rounded-tr-lg">Status</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <?php foreach ($historyPeminjaman as $peminjaman): ?>
+                            <?php foreach ($peminjaman->detailPeminjaman as $detail): ?>
                             <tr class="hover">
-                                <td class="font-semibold">The Great Gatsby</td>
-                                <td>2023-05-01</td>
-                                <td>2023-05-15</td>
-                                <td><span class="badge badge-success gap-2">
+                                <td class="font-semibold">
+                                    <?php 
+                                            $buku = $modelBuku->getBukuById($detail->buku_id);
+                                            echo htmlspecialchars($buku->judul);
+                                            ?>
+                                </td>
+                                <td><?= htmlspecialchars($peminjaman->tanggal_pinjam); ?></td>
+                                <td><?= htmlspecialchars($peminjaman->tanggal_kembali); ?></td>
+                                <td><?= htmlspecialchars($detail->jumlah); ?></td>
+                                <td>
+                                    <?php 
+                                            $status = $modelStatus->getStatusById($peminjaman->status_id);
+                                            if ($status->status_nama == 'Dikembalikan'): ?>
+                                    <span class="badge badge-success gap-2">
                                         <i class="fas fa-check"></i>
-                                        Dikembalikan
-                                    </span></td>
-                            </tr>
-                            <tr class="hover">
-                                <td class="font-semibold">To Kill a Mockingbird</td>
-                                <td>2023-05-10</td>
-                                <td>2023-05-24</td>
-                                <td><span class="badge badge-warning gap-2">
+                                        <?= htmlspecialchars($status->status_nama); ?>
+                                    </span>
+                                    <?php else: ?>
+                                    <span class="badge badge-warning gap-2">
                                         <i class="fas fa-clock"></i>
-                                        Dipinjam
-                                    </span></td>
+                                        <?= htmlspecialchars($status->status_nama); ?>
+                                    </span>
+                                    <?php endif; ?>
+                                </td>
                             </tr>
-                            <tr class="hover">
-                                <td class="font-semibold">1984</td>
-                                <td>2023-05-20</td>
-                                <td>2023-06-03</td>
-                                <td><span class="badge badge-error gap-2">
-                                        <i class="fas fa-exclamation-triangle"></i>
-                                        Terlambat
-                                    </span></td>
-                            </tr>
+                            <?php endforeach; ?>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
                 </div>
